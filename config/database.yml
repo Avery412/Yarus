@@ -1,0 +1,26 @@
+# Параметры PostgreSQL берутся из переменных окружения.
+# JSON-кодирование строк сохраняет специальные символы в логине/пароле
+# и не требует хранить секрет в конфигурационном файле.
+<% require "json" %>
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5).to_i %>
+  host: <%= ENV.fetch("YARUS_DB_HOST", "localhost").to_json %>
+  port: <%= ENV.fetch("YARUS_DB_PORT", "5432").to_i %>
+  username: <%= (ENV["YARUS_DB_USERNAME"].to_s.empty? ? ENV.fetch("PGUSER", "postgres") : ENV["YARUS_DB_USERNAME"]).to_json %>
+  password: <%= (ENV["YARUS_DB_PASSWORD"].to_s.empty? ? ENV["PGPASSWORD"] : ENV["YARUS_DB_PASSWORD"]).to_json %>
+  connect_timeout: <%= ENV.fetch("YARUS_DB_CONNECT_TIMEOUT", "5").to_i %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("YARUS_DB_DEVELOPMENT", "yarus_development").to_json %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("YARUS_DB_TEST", "yarus_test").to_json %>
+
+production:
+  <<: *default
+  database: <%= ENV.fetch("YARUS_DB_PRODUCTION", "yarus_production").to_json %>
