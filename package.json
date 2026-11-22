@@ -1,0 +1,15 @@
+{
+  "name": "yarus-warehouse-ui",
+  "private": true,
+  "scripts": {
+    "build": "node frontend/build.mjs",
+    "watch": "node frontend/build.mjs --watch"
+  },
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "@fontsource/inter": "5.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": { "esbuild": "0.28.2" }
+}

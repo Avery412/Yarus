@@ -247,7 +247,14 @@ connection.close
                 try {
                     Set-TemporaryProcessEnvironment -Name 'RAILS_ENV' -Value 'test'
                     $testOk = Invoke-Task 'Test database prepare and migrations' { Invoke-RailsCommand @('db:prepare') }
-                    if ($testOk) { Invoke-Task 'Minitest suite' { Invoke-RailsCommand @('test') } | Out-Null }
+                    if ($testOk) {
+                        Invoke-Task 'React build and Minitest suite' {
+                            $npmExe = (Get-Command npm.cmd -ErrorAction Stop).Source
+                            Invoke-NativeCommand -Executable $npmExe -Arguments @('ci')
+                            Invoke-NativeCommand -Executable $npmExe -Arguments @('run', 'build')
+                            Invoke-RailsCommand @('test')
+                        } | Out-Null
+                    }
                     else { Add-Result 'Minitest suite' 'SKIP' 'Test database was not prepared.' }
                 }
                 finally { Set-TemporaryProcessEnvironment -Name 'RAILS_ENV' -Value $oldRailsEnv }

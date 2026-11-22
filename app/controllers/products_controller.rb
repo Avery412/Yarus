@@ -1,50 +1,58 @@
-# Принимает HTTP-запросы для каталога товаров. Правила поиска и доступа к данным
-# находятся в ProductsRepository, а контроллер отвечает за параметры и ответы HTTP.
 class ProductsController < ApplicationController
+  include ReactWorkspace
+
+  FIELDS = %i[name sku unit description].freeze
   before_action :set_product, only: %i[show edit update]
 
   def index
-    @pagination = ProductsRepository.new.list(
-      search: params[:search],
-      page: params[:page],
-      per_page: params[:per_page]
-    )
-    @products = @pagination.records
+    page = ProductsRepository.new.list(search: params[:search], page: params[:page], per_page: params[:per_page])
+    render_react("products", page_props(page, page.records.map { |record| record.slice(:id, *FIELDS) }))
   end
 
-  def show; end
+  def show
+    render_react("product", { record: @product.slice(:id, *FIELDS) })
+  end
 
   def new
-    @product = Product.new
+    render_form(Product.new)
+  end
+
+  def edit
+    render_form(@product)
   end
 
   def create
-    @product = ProductsRepository.new.create!(product_params)
-    redirect_to @product, notice: "Товар создан"
+    product = ProductsRepository.new.create!(product_params)
+    redirect_to product, notice: "Товар создан", status: :see_other
   rescue ActiveRecord::RecordInvalid => error
-    @product = error.record
-    render :new, status: :unprocessable_entity
+    render_form(error.record, status: :unprocessable_entity)
+  rescue ActiveRecord::RecordNotUnique
+    product = Product.new(product_params)
+    product.errors.add(:sku, :taken)
+    render_form(product, status: :unprocessable_entity)
   end
-
-  def edit; end
 
   def update
     ProductsRepository.new.update!(@product, product_params)
-    redirect_to @product, notice: "Товар обновлён"
+    redirect_to @product, notice: "Товар обновлён", status: :see_other
   rescue ActiveRecord::RecordInvalid => error
-    @product = error.record
-    render :edit, status: :unprocessable_entity
+    render_form(error.record, status: :unprocessable_entity)
+  rescue ActiveRecord::RecordNotUnique
+    @product.errors.add(:sku, :taken)
+    render_form(@product, status: :unprocessable_entity)
   end
 
   private
+
+  def render_form(product, status: :ok)
+    render_react("product_form", form_props(product, FIELDS).merge(id: product.id), status: status)
+  end
 
   def set_product
     @product = ProductsRepository.new.find(params[:id])
   end
 
-  # Разрешён только явно перечисленный набор полей; параметры запроса не могут
-  # напрямую менять служебные атрибуты модели.
   def product_params
-    params.require(:product).permit(:name, :sku, :description, :unit)
+    params.require(:product).permit(*FIELDS)
   end
 end
