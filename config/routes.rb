@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   root "home#index"
   get "home/index"
+  resource :session, only: %i[new create destroy]
 
   resources :products, only: %i[index show new create edit update]
   resources :warehouses, only: %i[index show new create edit update]

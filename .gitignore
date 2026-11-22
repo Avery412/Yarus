@@ -43,3 +43,7 @@
 
 # Marker file for lockfile refresh on first run
 /scripts/.refresh-lockfile-on-first-run
+
+/node_modules/
+/app/assets/builds/*
+!/app/assets/builds/.keep
