@@ -50,7 +50,7 @@ bundle exec rails test
 bundle exec rails test:system
 ```
 
-Для системного теста нужны Chrome и ChromeDriver (Selenium Manager подбирает драйвер). GitHub Actions выполняет сборку и проверки на PostgreSQL 18.6. На Windows можно запустить `scripts/verify_backend.ps1` из PowerShell после установки PostgreSQL, Ruby и Node.js. Скрипт проверяет версии, базы, сборку React и запускает обычный набор Minitest.
+Для системного теста нужны Chrome и ChromeDriver (Selenium Manager подбирает драйвер). GitHub Actions выполняет сборку и проверки на PostgreSQL 18.6. На Windows можно запустить `scripts/verify_backend.ps1` из PowerShell после установки PostgreSQL, Node.js и RubyInstaller с DevKit. Скрипт проверяет версии, базы, сборку React и запускает обычный набор Minitest.
 
 `docker build -t yarus .` собирает React и компилирует Rails-ресурсы внутри образа. Для запуска укажите подключение к PostgreSQL и `SECRET_KEY_BASE`, передав секрет через окружение развёртывания. Production рассчитан на HTTPS.
 
