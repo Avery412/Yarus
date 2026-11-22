@@ -122,8 +122,8 @@ try {
         throw 'Project files are missing. Run this script from the scripts folder inside the project archive.'
     }
 
-    $gemfile = Get-Content -LiteralPath 'Gemfile' -Raw
-    $dockerfile = Get-Content -LiteralPath 'Dockerfile' -Raw
+    $gemfile = (Get-Content -LiteralPath 'Gemfile' -Raw) -replace [char]13, ''
+    $dockerfile = (Get-Content -LiteralPath 'Dockerfile' -Raw) -replace [char]13, ''
     $rubyVersionFile = (Get-Content -LiteralPath '.ruby-version' -Raw).Trim()
     $pinsOk = (
         $gemfile -match '(?m)^ruby "4\.0\.9"$' -and
