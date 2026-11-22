@@ -2,7 +2,14 @@
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
 ARG RUBY_VERSION=4.0.9
-FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
+FROM node:24-bookworm-slim AS frontend
+WORKDIR /build
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY frontend ./frontend
+RUN npm run build
+
+FROM registry.docker.com/library/ruby:${RUBY_VERSION}-slim AS base
 
 # Rails app lives here
 WORKDIR /rails
@@ -17,7 +24,7 @@ ENV RAILS_ENV="production" \
 
 
 # Throw-away build stage to reduce size of final image
-FROM base as build
+FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
@@ -33,6 +40,7 @@ RUN gem update --system "$RUBYGEMS_VERSION" && \
 
 # Copy application code
 COPY . .
+COPY --from=frontend /build/app/assets/builds ./app/assets/builds
 
 # Precompile bootsnap code for faster boot times
 RUN bundle _${BUNDLER_VERSION}_ exec bootsnap precompile app/ lib/
