@@ -72,7 +72,7 @@ export function Movements({ rows, filters, pagination, products, warehouses }) {
       <Field label="С даты" name="start_date" value={filters.start_date} type="date" />
       <Field label="По дату" name="end_date" value={filters.end_date} type="date" />
     </Filters>
-    {rows.length ? <Table label="Журнал операций" headers={["Операция", "Тип", "Товар", "Склад", "Количество", "Автор", "Дата и время"]}
+    {rows.length ? <Table wide label="Журнал операций" headers={["Операция", "Тип", "Товар", "Склад", "Количество", "Автор", "Дата и время"]}
       rows={rows.map(row => ({
         id: row.id, cells: [<a href={routes.movements + "/" + row.id}>№ {row.id}</a>,
           <MovementType type={row.movement_type} />, row.product.name, row.warehouse.name,

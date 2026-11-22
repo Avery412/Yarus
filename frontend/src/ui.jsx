@@ -54,9 +54,9 @@ export function DetailList({ fields }) {
   </dl>;
 }
 
-export function Table({ label, headers, rows }) {
+export function Table({ label, headers, rows, wide = false }) {
   return <div className="table-scroll" tabIndex={0} role="region" aria-label={label}>
-    <table>
+    <table className={wide ? "wide-table" : undefined}>
       <thead><tr>{headers.map(header => <th scope="col" key={header}>{header}</th>)}</tr></thead>
       <tbody>{rows.map(({ id, cells }) => <tr key={id}>
         {cells.map((cell, index) => <td key={headers[index]}>{cell}</td>)}

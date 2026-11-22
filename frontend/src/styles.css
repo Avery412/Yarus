@@ -151,3 +151,6 @@ tbody tr:hover { background: #f8f9f5; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
 }
+
+.wide-table { min-width: 900px; }
+.movement-type { white-space: nowrap; }
