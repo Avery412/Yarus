@@ -25,7 +25,7 @@ class WarehouseWorkflowTest < ApplicationSystemTestCase
 
     click_link "Оформить обратную операцию"
     assert_field "Количество", with: "10.0"
-    assert_select "Тип операции", selected: "Расход"
+    assert_selector :select, "Тип операции", selected: "Расход"
     fill_in "Количество", with: "3,25"
     click_button "Провести операцию"
     assert_text "−3,250 м²"
