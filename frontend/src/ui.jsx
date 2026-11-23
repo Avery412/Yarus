@@ -56,10 +56,15 @@ export function DetailList({ fields }) {
 
 export function Table({ label, headers, rows, wide = false }) {
   return <div className="table-scroll" tabIndex={0} role="region" aria-label={label}>
-    <table className={wide ? "wide-table" : undefined}>
-      <thead><tr>{headers.map(header => <th scope="col" key={header}>{header}</th>)}</tr></thead>
-      <tbody>{rows.map(({ id, cells }) => <tr key={id}>
-        {cells.map((cell, index) => <td key={headers[index]}>{cell}</td>)}
+    <table role="table" className={wide ? "wide-table" : undefined}>
+      <thead role="rowgroup"><tr role="row">
+        {headers.map(header => <th role="columnheader" scope="col" key={header}>{header}</th>)}
+      </tr></thead>
+      <tbody role="rowgroup">{rows.map(({ id, cells }) => <tr role="row" key={id}>
+        {cells.map((cell, index) => <td role="cell" key={headers[index]}>
+          <span className="cell-label" aria-hidden="true">{headers[index]}</span>
+          <span className="cell-value">{cell}</span>
+        </td>)}
       </tr>)}</tbody>
     </table>
   </div>;
